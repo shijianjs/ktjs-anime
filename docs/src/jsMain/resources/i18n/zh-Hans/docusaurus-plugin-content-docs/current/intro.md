@@ -5,7 +5,7 @@ title: 简介
 
 # 简介
 
-`ktjs-anime` 是 [GSAP](https://github.com/juliangarnier/anime) 生态里 `animejs` 4.5.0-kt.1 的 Kotlin/JS wrapper：上游
+`ktjs-anime` 是 [anime.js](https://github.com/juliangarnier/anime) 生态里 `animejs` 4.5.0 的 Kotlin/JS wrapper：上游
 `.d.ts` 里的每个类型和成员都落成可被编译器检查的 `external` 声明，不靠 `dynamic` 兜底。
 
 封装范围是 `animejs` 4 的动画核心：`animate()`、`createTimeline()`、`createTimer()`、`stagger()`、`JSAnimation` / `Timeline` / `Timer` 类层次及其带类型的参数对象、`anime.utils`（数字、目标与时间工具）、`anime.easings`（缓动工厂与 `eases` 缓动集合）。

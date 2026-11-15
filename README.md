@@ -4,7 +4,7 @@ Kotlin/JS bindings for anime.js 4 — animations, timelines, timers, easing and 
 
 The wrapper covers the animation core of `animejs` 4: `animate`, `createTimeline`, `createTimer`, `stagger`, the `Timer`/`JSAnimation`/`Timeline` hierarchy with typed parameter objects, `anime.utils` and `anime.easings`. Optional upstream arguments become real zero-argument overloads, because anime.js destructures `{}` and would throw on `null`.
 
-- Upstream package: [`animejs`](https://github.com/juliangarnier/anime) 4.5.0-kt.1
+- Upstream package: [`animejs`](https://github.com/juliangarnier/anime) 4.5.0
 - Docs: https://shijianjs.github.io/ktjs-anime/
 - Demo: https://shijianjs.github.io/ktjs-anime/demo/
 - API: https://shijianjs.github.io/ktjs-anime/api/
@@ -27,4 +27,4 @@ implementation("io.github.shijianjs:ktjs-anime:4.5.0-kt.1")
 
 ## License
 
-The wrapper is MIT, and so is the upstream `animejs` package (Copyright (c) 2017 Julian Garnier). See the "License" page of the docs for the full notice.
+The wrapper is MIT, same as the upstream `animejs` — see the "License" page of the docs.

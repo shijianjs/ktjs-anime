@@ -5,7 +5,7 @@ title: Introduction
 
 # Introduction
 
-`ktjs-anime` is a Kotlin/JS wrapper for [`animejs`](https://github.com/juliangarnier/anime) 4.5.0-kt.1: every type and member of
+`ktjs-anime` is a Kotlin/JS wrapper for [`animejs`](https://github.com/juliangarnier/anime) from [anime.js](https://github.com/juliangarnier/anime) 4.5.0: every type and member of
 the upstream `.d.ts` files becomes an `external` declaration the compiler checks, with no
 `dynamic` fallback.
 
