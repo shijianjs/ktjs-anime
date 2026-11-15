@@ -1,59 +1,68 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
+title: Getting started
 ---
 
 # Getting started
 
-## Requirements
+## Dependency
 
-- JDK 21 or newer; the Gradle wrapper is checked in (9.4.1).
-- Node and npm are downloaded and driven by the Kotlin Gradle plugin — there is no `npm install` step
-  to remember, and `kotlin.js.yarn=false` keeps npm as the package manager.
-- Chromium is downloaded by Playwright the first time a browser test runs.
-
-## Build, test, publish
-
-```bash
-./gradlew build                    # compile, Detekt, browser tests
-./gradlew :ktjs-wrapper-template-core:jsBrowserTest
-./gradlew :demo:e2eTest            # Playwright against the bundled demo page
-./gradlew :docs:docusaurusBuild    # the documentation site
-./gradlew pagesSite                # documentation at /, demo at /demo/, Dokka at /api/
+```kotlin
+kotlin {
+    js {
+        binaries.executable()
+        browser()
+    }
+    sourceSets {
+        jsMain.dependencies {
+            implementation("io.github.shijianjs:ktjs-anime:4.5.0-kt.1")
+            // The public API exposes `kotlin-browser`'s `web.*` types, so a consumer must be able to
+            // compile against them.
+            implementation("org.jetbrains.kotlin-wrappers:kotlin-browser:2026.11.1")
+        }
+    }
+}
 ```
 
-`build` does not run the demo's end-to-end suite or assemble the Pages site: both need a browser and
-are part of CI as separate steps.
+Kotlin 2.4.21 or newer; the module emits ESM and targets `es2015` or later.
 
-## Develop
+## Register the plugins
 
-```bash
-./gradlew :docs:docusaurusStart    # dev server for this site
-./gradlew :demo:jsBrowserRun       # dev server for the demo page
+anime.js 4 has no plugin registry: everything is a named export of the `animejs` module. Kotlin/JS cannot bind named exports directly, so the wrapper declares the module as one external object (`AnimeNamespace`) and the public functions (`animate`, `createTimeline`, …) delegate to it. Importing `io.github.shijianjs.ktjs.anime.animate` is therefore enough — there is nothing to register.
+
+## First call
+
+```kotlin
+import io.github.shijianjs.ktjs.anime.animate
+import io.github.shijianjs.ktjs.anime.animationParams
+import io.github.shijianjs.ktjs.anime.core.EasingParam
+import io.github.shijianjs.ktjs.anime.core.Target
+import io.github.shijianjs.ktjs.anime.core.TargetsParam
+import io.github.shijianjs.ktjs.anime.core.TweenParamValue
+import io.github.shijianjs.ktjs.anime.core.property
+
+fun slideIn(element: web.dom.Element) {
+    animate(
+        TargetsParam(Target(element)),
+        animationParams {
+            property("translateX", 240.0)
+            property("opacity", 1.0)
+            duration = TweenParamValue(800.0)
+            ease = EasingParam("outQuad")
+        },
+    )
+}
 ```
 
-Docusaurus watches the site directory, so Markdown edits reload; Kotlin changes need
-`./gradlew :docs:docusaurusSite` first, because the site imports the compiled module.
+Animated properties are set with `property(name, value)` because the upstream `AnimationParams`
+is an index signature; every fixed option (`duration`, `ease`, `loop`, callbacks, …) is a typed
+field of the same object.
 
-## Where things live
-
-| Path | Contents |
-| --- | --- |
-| `package.json` | the only place npm versions are declared (Dependabot maintains it) |
-| `wrapper-revisions.properties` | per-module `-kt.N` revision |
-| `ktjs-wrapper-template-core/src/jsMain/kotlin` | the wrapper declarations |
-| `ktjs-wrapper-template-core/src/jsTest/kotlin` | browser tests for them |
-| `demo/src/jsMain` | the demo page and its Kotlin entry point |
-| `docs/src/jsMain/kotlin` | the site configuration and sidebar |
-| `docs/src/jsMain/resources` | Markdown pages, MDX landing page, CSS, translations |
-
-## The lock file
-
-npm dependencies are resolved once for the whole workspace and pinned in
-`kotlin-js-store/package-lock.json`. After adding or upgrading an npm dependency — or changing a
-module's version — regenerate it:
+## Build and test
 
 ```bash
-./gradlew kotlinUpgradePackageLock
+./gradlew build                     # compile, Detekt, browser tests
+./gradlew :ktjs-anime:jsBrowserTest     # only the wrapper's browser tests
+./gradlew :docs:docusaurusStart     # documentation dev server
+./gradlew pagesSite                 # docs at /, demo at /demo/, Dokka at /api/
 ```
-
-CI verifies the committed file, so a forgotten regeneration fails the build rather than drifting.

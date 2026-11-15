@@ -1,57 +1,66 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
+title: 快速开始
 ---
 
 # 快速开始
 
-## 环境要求
+## 依赖
 
-- JDK 21 或更高；Gradle wrapper 已入库（9.4.1）。
-- Node 与 npm 由 Kotlin Gradle 插件下载并驱动——没有需要手动执行的 `npm install`，`kotlin.js.yarn=false`
-  保证包管理器是 npm。
-- 第一次跑浏览器测试时会下载 Chromium（Playwright）。
-
-## 构建、测试、发布
-
-```bash
-./gradlew build                    # 编译、Detekt、浏览器测试
-./gradlew :ktjs-wrapper-template-core:jsBrowserTest
-./gradlew :demo:e2eTest            # 用 Playwright 打打包后的 demo 页面
-./gradlew :docs:docusaurusBuild    # 文档站
-./gradlew pagesSite                # 根目录是文档，demo 在 /demo/，Dokka 在 /api/
+```kotlin
+kotlin {
+    js {
+        binaries.executable()
+        browser()
+    }
+    sourceSets {
+        jsMain.dependencies {
+            implementation("io.github.shijianjs:ktjs-anime:4.5.0-kt.1")
+            // `kotlin-browser` 的 `web.*` 类型出现在公开 API 里，所以消费方要能编译到它们。
+            implementation("org.jetbrains.kotlin-wrappers:kotlin-browser:2026.11.1")
+        }
+    }
+}
 ```
 
-`build` 不含 demo 的端到端套件，也不组装 Pages 站点：两者都要浏览器，在 CI 里是单独的步骤。
+要求 Kotlin 2.4.21 或更新版本；wrapper 输出 ESM，`es2015` 目标起可用。
 
-## 开发
+## 注册插件
 
-```bash
-./gradlew :docs:docusaurusStart    # 文档站的开发服务器
-./gradlew :demo:jsBrowserRun       # demo 页面的开发服务器
+anime.js 4 没有插件注册表：一切都是 `animejs` 模块的具名导出。Kotlin/JS 不能直接绑定具名导出，所以 wrapper 把模块声明成一个 external object（`AnimeNamespace`），公开函数（`animate`、`createTimeline` 等）转发给它。因此导入 `io.github.shijianjs.ktjs.anime.animate` 就够了 —— 没有需要注册的东西。
+
+## 第一个调用
+
+```kotlin
+import io.github.shijianjs.ktjs.anime.animate
+import io.github.shijianjs.ktjs.anime.animationParams
+import io.github.shijianjs.ktjs.anime.core.EasingParam
+import io.github.shijianjs.ktjs.anime.core.Target
+import io.github.shijianjs.ktjs.anime.core.TargetsParam
+import io.github.shijianjs.ktjs.anime.core.TweenParamValue
+import io.github.shijianjs.ktjs.anime.core.property
+
+fun slideIn(element: web.dom.Element) {
+    animate(
+        TargetsParam(Target(element)),
+        animationParams {
+            property("translateX", 240.0)
+            property("opacity", 1.0)
+            duration = TweenParamValue(800.0)
+            ease = EasingParam("outQuad")
+        },
+    )
+}
 ```
 
-Docusaurus 监听站点目录，改 Markdown 即时刷新；改 Kotlin 要先 `./gradlew :docs:docusaurusSite`，因为
-站点 import 的是编译产物。
+被动画的属性用 `property(name, value)` 设置 —— 上游 `AnimationParams` 是索引签名；所有固定选项
+（`duration`、`ease`、`loop`、回调等）都是同一对象上的带类型字段。
 
-## 目录结构
-
-| 路径 | 内容 |
-| --- | --- |
-| `package.json` | npm 版本的唯一来源（Dependabot 维护） |
-| `wrapper-revisions.properties` | 每个模块的 `-kt.N` 修订号 |
-| `ktjs-wrapper-template-core/src/jsMain/kotlin` | wrapper 声明 |
-| `ktjs-wrapper-template-core/src/jsTest/kotlin` | 对应的浏览器测试 |
-| `demo/src/jsMain` | demo 页面与它的 Kotlin 入口 |
-| `docs/src/jsMain/kotlin` | 站点配置与侧边栏 |
-| `docs/src/jsMain/resources` | Markdown 页面、MDX 首页、样式、译文 |
-
-## 锁文件
-
-整个 workspace 的 npm 依赖只解析一次，钉在 `kotlin-js-store/package-lock.json`。新增或升级 npm 依赖、
-或者改了模块版本之后要重新生成：
+## 构建与测试
 
 ```bash
-./gradlew kotlinUpgradePackageLock
+./gradlew build                     # 编译、Detekt、浏览器测试
+./gradlew :ktjs-anime:jsBrowserTest     # 只跑 wrapper 的浏览器测试
+./gradlew :docs:docusaurusStart     # 文档开发服务器
+./gradlew pagesSite                 # 文档在 /，演示在 /demo/，Dokka 在 /api/
 ```
-
-CI 会校验提交的锁文件，忘了重新生成会直接构建失败，而不是悄悄漂移。
