@@ -1,5 +1,25 @@
+// Referenced with imports rather than fully qualified names: inside a Gradle script `java` is the
+// JavaPluginExtension accessor, so `java.awt.…` does not resolve.
+import java.awt.RenderingHints
+import java.awt.image.BufferedImage
+
 plugins {
     kotlin("multiplatform")
+}
+
+// The demo shell (`ktjs-demo-kit`) is built from Vaadin's published wrapper, which ships the
+// JavaScript side of `@vaadin/vaadin-lumo-styles` but not the CSS: that is a page-level `<link>`,
+// taken from the npm workspace the Kotlin/JS plugin installs at the root.
+val lumoStyles = rootProject.layout.buildDirectory.dir("js/node_modules/@vaadin/vaadin-lumo-styles/dist")
+
+val copyLumoStyles = tasks.register<Copy>("copyLumoStyles") {
+    description = "Copies the pre-built Lumo stylesheet into the demo resources."
+    dependsOn(":kotlinNpmInstall")
+    from(lumoStyles) {
+        include("lumo.css")
+        include("utility.css")
+    }
+    into(layout.buildDirectory.dir("generated/lumo"))
 }
 
 // The brand image lives with the site's static files and is copied in here, so the demo and the
@@ -13,9 +33,43 @@ val brandAssets = tasks.register<Copy>("brandAssets") {
     into(layout.buildDirectory.dir("generated/brand"))
 }
 
+// The navbar draws the mark at 28px, so the 1254px original is scaled down instead of shipped.
+val logoPixels = 128
+
+val scaleLogo = tasks.register("scaleLogo") {
+    description = "Scales the repository logo down into the demo resources."
+    val source = rootProject.file("docs/src/jsMain/resources/static/img/ktjs-anime-logo.png")
+    val outputDir = layout.buildDirectory.dir("generated/logo")
+    inputs.file(source)
+    outputs.dir(outputDir)
+    doLast {
+        val target = outputDir.get().asFile.resolve("img/ktjs-anime-logo.png")
+        target.parentFile.mkdirs()
+        val original = javax.imageio.ImageIO.read(source)
+        val scaled = BufferedImage(logoPixels, logoPixels, BufferedImage.TYPE_INT_ARGB)
+        val graphics = scaled.createGraphics()
+        graphics.setRenderingHint(
+            RenderingHints.KEY_INTERPOLATION,
+            RenderingHints.VALUE_INTERPOLATION_BILINEAR,
+        )
+        graphics.drawImage(original, 0, 0, logoPixels, logoPixels, null)
+        graphics.dispose()
+        javax.imageio.ImageIO.write(scaled, "png", target)
+    }
+}
+
 kotlin {
     js {
         useEsModules()
+
+        // Custom elements need a class: at the default ES5 target Kotlin emits
+        // `function X() { HTMLElement.call(this) }`, and a DOM constructor may only be invoked with
+        // `new` — the tag never upgrades. The demo shell is a custom element, so ES2015 is required;
+        // the opt-in is the same one the demo kit compiles with, for `JsAny` interop it exposes.
+        compilerOptions {
+            target = "es2015"
+            optIn.add("kotlin.js.ExperimentalWasmJsInterop")
+        }
 
         // The demo is a standalone page, so the JS target needs an executable webpack bundle.
         binaries.executable()
@@ -28,12 +82,18 @@ kotlin {
 
     sourceSets {
         jsMain {
-            resources.srcDir(brandAssets)
+            resources.srcDir(copyLumoStyles)
+            resources.srcDir(scaleLogo)
         }
         jsMain.dependencies {
             implementation("org.jetbrains.kotlin-wrappers:kotlin-browser:2026.11.1")
             // The published modules the demo demonstrates, one line each.
             implementation(project(":ktjs-anime"))
+            // The shared demo shell: layout, menu, router, i18n. Published to `mavenLocal` by a
+            // working tree of the `ktjs-dom-kit` repository until the release batch.
+            implementation(
+                "io.github.shijianjs:ktjs-demo-kit-js:${providers.gradleProperty("ktjs-demo-kit.version").get()}",
+            )
         }
 
         jvmTest.dependencies {
