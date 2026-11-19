@@ -11,6 +11,17 @@ The demo page runs two real animations built through the wrapper: a timeline in 
 enter one after another, each 150 ms after the previous one, and a single tween whose easing comes
 from the select (`outQuad`, `outCubic`, `outExpo`, `outBounce`, `outElastic`). Play restarts the
 timeline and the reset button returns every box to its resting state.
+```mermaid
+flowchart LR
+  TL["createTimeline({ easing: ''outQuad'' })<br/>five boxes, each +150 ms"] --> BOX["boxes enter one after another"]
+  PLAY["Play"] -->|"restarts"| TL
+  RESET["Reset"] -->|"resting state"| BOX
+  SEL["easing select<br/>outQuad, outCubic, outExpo, outBounce, outElastic"] --> TW["createAnimation(target, vars)"]
+  TW --> BOX
+```
+
+Both examples are the same wrapper surface: a target, a variables record, and a timeline that owns the
+order.
 
 The language button in the page header switches between English and Simplified Chinese: every
 visible string changes, not just the title.
