@@ -3,8 +3,8 @@ package demo
 import io.github.shijianjs.ktjs.demo.nav.DemoMenu
 import io.github.shijianjs.ktjs.demo.nav.Entry
 import io.github.shijianjs.ktjs.demo.nav.Group
-import demo.page.animation.AnimationPage
-import demo.page.overview.OverviewPage
+import demo.page.animation.newAnimationPage
+import demo.page.overview.newOverviewPage
 
 /** the anime.js version this demo is built against; the navbar shows it under the site name. */
 const val SITE_VERSION: String = "4.5.0"
@@ -28,7 +28,7 @@ private val EXAMPLES: Group = Group("examples", "lucide:play")
  */
 fun siteMenu(): DemoMenu = DemoMenu(
     listOf(
-        Entry("overview", START, "lucide:sparkles") { OverviewPage() },
-        Entry("animation", EXAMPLES, "lucide:layers") { AnimationPage() },
+        Entry("overview", START, "lucide:sparkles") { newOverviewPage() },
+        Entry("animation", EXAMPLES, "lucide:layers") { newAnimationPage() },
     ),
 )
