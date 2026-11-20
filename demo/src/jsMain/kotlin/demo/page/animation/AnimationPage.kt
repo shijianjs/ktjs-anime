@@ -26,40 +26,6 @@ import web.events.addHandler
 import web.html.HTMLElement
 import web.html.HtmlTagName
 
-private val animationEnglish: AnimationTexts = AnimationTexts(
-    title = "Animation",
-    summary = "Two real anime.js animations created through the Kotlin/JS wrapper: a timeline with " +
-        "staggered children, and one tween whose easing comes from the picker.",
-    timelineHeading = "Timeline with a stagger",
-    timelineHint = "Each box starts 150 ms after the previous one, on a timeline built once at start-up.",
-    easingHeading = "Single tween, easing from the picker",
-    easingHint = "Choosing an easing plays the same tween again with the chosen curve.",
-    play = "Play",
-    reset = "Reset",
-    easingLabel = "Easing",
-)
-
-private val animationChinese: AnimationTexts = AnimationTexts(
-    title = "动画",
-    summary = "两条通过 Kotlin/JS wrapper 创建的真实 anime.js 动画：一条带错开子项的时间线，" +
-        "以及一条缓动取自下拉框的补间。",
-    timelineHeading = "带错开的时间线",
-    timelineHint = "每个方块比前一个晚 150 毫秒入场，时间线在启动时构建一次。",
-    easingHeading = "单条补间，缓动取自下拉框",
-    easingHint = "换一个缓动会按所选曲线重新播放同一条补间。",
-    play = "播放",
-    reset = "重置",
-    easingLabel = "缓动",
-)
-
-private val animationTexts: Translations<AnimationTexts> = texts(
-    Langs.EN to animationEnglish,
-    Langs.ZH_HANS to animationChinese,
-)
-
-/** The easing names the demo offers; all of them ship with `animejs`. */
-private val EASINGS: List<String> = listOf("outQuad", "outCubic", "outExpo", "outBounce", "outElastic")
-
 /**
  * The animation page: both examples on one page, because they are one story — the timeline builds
  * children, the tween takes one value from a picker.
@@ -71,7 +37,7 @@ internal class AnimationPage : DemoPage() {
 
     private val texts = Binder(animationTexts)
 
-    private val boxes: List<Box> = (1..5).map { newBox(it) }
+    private val boxes: List<Box> = (1..5).map { index -> Box.NAME { show(index) } }
 
     private val timelineStage: Stage = Stage.NAME().apply { boxes.forEach { append(it) } }
 
@@ -87,7 +53,7 @@ internal class AnimationPage : DemoPage() {
 
     private val easingLabel: HTMLElement = HtmlTagName.label {}
 
-    private val easingSelect: EasingPicker = newEasingPicker(EASINGS)
+    private val easingSelect: EasingPicker = EasingPicker.NAME { offer(EASINGS) }
 
     /** The staggered timeline; built once, restarted by the Play button. */
     private val timeline = createTimeline(timelineParams { autoplay = false }).apply {
@@ -175,5 +141,37 @@ internal class AnimationPage : DemoPage() {
         texts.apply(lang)
     }
 
-    companion object : CustomElementReferenceAdapter<AnimationPage>(AnimationPage::class.js, "anime-animation-page")
+    companion object : CustomElementReferenceAdapter<AnimationPage>(AnimationPage::class.js, "anime-animation-page") {
+
+        private val animationEnglish: AnimationTexts = AnimationTexts(
+            title = "Animation",
+            summary = "Two real anime.js animations created through the Kotlin/JS wrapper: a timeline with " +
+                "staggered children, and one tween whose easing comes from the picker.",
+            timelineHeading = "Timeline with a stagger",
+            timelineHint = "Each box starts 150 ms after the previous one, on a timeline built once at start-up.",
+            easingHeading = "Single tween, easing from the picker",
+            easingHint = "Choosing an easing plays the same tween again with the chosen curve.",
+            play = "Play",
+            reset = "Reset",
+            easingLabel = "Easing",
+        )
+        private val animationChinese: AnimationTexts = AnimationTexts(
+            title = "动画",
+            summary = "两条通过 Kotlin/JS wrapper 创建的真实 anime.js 动画：一条带错开子项的时间线，" +
+                "以及一条缓动取自下拉框的补间。",
+            timelineHeading = "带错开的时间线",
+            timelineHint = "每个方块比前一个晚 150 毫秒入场，时间线在启动时构建一次。",
+            easingHeading = "单条补间，缓动取自下拉框",
+            easingHint = "换一个缓动会按所选曲线重新播放同一条补间。",
+            play = "播放",
+            reset = "重置",
+            easingLabel = "缓动",
+        )
+        private val animationTexts: Translations<AnimationTexts> = texts(
+            Langs.EN to animationEnglish,
+            Langs.ZH_HANS to animationChinese,
+        )
+        /** The easing names the demo offers; all of them ship with `animejs`. */
+        private val EASINGS: List<String> = listOf("outQuad", "outCubic", "outExpo", "outBounce", "outElastic")
+    }
 }
