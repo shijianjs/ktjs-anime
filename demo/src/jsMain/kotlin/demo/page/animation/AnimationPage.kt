@@ -26,19 +26,6 @@ import web.events.addHandler
 import web.html.HTMLElement
 import web.html.HtmlTagName
 
-/** Every string this page shows, in one language. */
-private class AnimationTexts(
-    val title: String,
-    val summary: String,
-    val timelineHeading: String,
-    val timelineHint: String,
-    val easingHeading: String,
-    val easingHint: String,
-    val play: String,
-    val reset: String,
-    val easingLabel: String,
-)
-
 private val animationEnglish: AnimationTexts = AnimationTexts(
     title = "Animation",
     summary = "Two real anime.js animations created through the Kotlin/JS wrapper: a timeline with " +
@@ -123,7 +110,6 @@ internal class AnimationPage : DemoPage() {
             )
         }
     }
-
 
     init {
         texts.bind(timelinePlay, { it.play })
