@@ -20,9 +20,6 @@ import web.cssom.`var`
 import web.cssom.px
 import web.html.HTMLElement
 
-/** The class the end-to-end suite uses to find the animated boxes; it carries no styling. */
-private val STAGE: ClassName = ClassName("stage")
-
 /** Wraps a DOM element as an anime.js target. */
 internal fun HTMLElement.target(): Target = Target(this)
 
@@ -59,5 +56,8 @@ internal class Stage : CustomElementAdapter() {
         }
     }
 
-    companion object : CustomElementReferenceAdapter<Stage>(Stage::class.js, "anime-stage")
+    companion object : CustomElementReferenceAdapter<Stage>(Stage::class.js, "anime-stage") {
+        /** The class the end-to-end suite uses to find the animated boxes; it carries no styling. */
+        private val STAGE: ClassName = ClassName("stage")
+    }
 }
