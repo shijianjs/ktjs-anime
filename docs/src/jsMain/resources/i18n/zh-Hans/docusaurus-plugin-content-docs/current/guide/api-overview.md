@@ -14,6 +14,13 @@ title: API 概览
 | `…anime.utils` | `anime.utils`：`clamp`、`round`、`snap`、`wrap`、`lerp`、`damp`、`mapRange`、`degToRad`、`radToDeg`、`random`、`randomPick`、`shuffle`、`get`、`set`、`remove`、`sync` |
 | `…anime.easings` | `anime.easings`（`spring`、`cubicBezier`、`steps`、`linear`、`irregular`）与 `eases` 集合 |
 
+```mermaid
+flowchart LR
+    ROOT["io.github.shijianjs.ktjs.anime<br/>animate / createTimeline / createTimer / stagger<br/>以及各参数构建器"] --> CORE["…anime.core<br/>Timer / JSAnimation / Timeline、参数接口、<br/>联合类型（TargetsParam、EasingParam）"]
+    CORE --> UTILS["…anime.utils<br/>clamp / snap / lerp / mapRange / get / set / sync …"]
+    CORE --> EAS["…anime.easings<br/>spring / cubicBezier / steps / linear / irregular，以及 eases"]
+```
+
 ## 本 wrapper 的约定
 
 - 联合类型 = 一个不透明接口 + 每个分支一个同名工厂：`TargetsParam("#app")`、

@@ -11,6 +11,18 @@ the upstream `.d.ts` files becomes an `external` declaration the compiler checks
 
 The wrapped surface is the animation core of the `animejs` 4 package: `animate()`, `createTimeline()`, `createTimer()`, `stagger()`, the `JSAnimation` / `Timeline` / `Timer` class hierarchy with its typed parameter objects, `anime.utils` (number, target and time helpers) and `anime.easings` (the easing factories plus the `eases` set).
 
+```mermaid
+flowchart LR
+    NPM["animejs 4.5.0, one npm package"] --> API["animate / createTimeline / createTimer / stagger"]
+    NPM --> CLASS["JSAnimation / Timeline / Timer"]
+    NPM --> UTILS["anime.utils"]
+    NPM --> EAS["anime.easings and eases"]
+    API --> K["io.github.shijianjs.ktjs.anime<br/>with core / utils / easings sub-packages"]
+    CLASS --> K
+    UTILS --> K
+    EAS --> K
+```
+
 ## What is wrapped
 
 | Module | Gradle artifact | Upstream |

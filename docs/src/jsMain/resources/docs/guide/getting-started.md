@@ -30,6 +30,14 @@ Kotlin 2.4.21 or newer; the module emits ESM and targets `es2015` or later.
 
 anime.js 4 has no plugin registry: everything is a named export of the `animejs` module. Kotlin/JS cannot bind named exports directly, so the wrapper declares the module as one external object (`AnimeNamespace`) and the public functions (`animate`, `createTimeline`, …) delegate to it. Importing `io.github.shijianjs.ktjs.anime.animate` is therefore enough — there is nothing to register.
 
+```mermaid
+flowchart LR
+    DEP["implementation(ktjs-anime) + kotlin-browser"] --> NS["AnimeNamespace: the module's named exports as one external object"]
+    NS --> FN["animate / createTimeline / createTimer / stagger"]
+    FN --> P["animationParams { property("translateX", 240.0); duration; ease }"]
+    P --> OUT["a JSAnimation / Timeline / Timer instance"]
+```
+
 ## First call
 
 ```kotlin

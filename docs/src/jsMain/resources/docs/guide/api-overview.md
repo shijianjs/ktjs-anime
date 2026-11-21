@@ -14,6 +14,13 @@ title: API overview
 | `…anime.utils` | `anime.utils`: `clamp`, `round`, `snap`, `wrap`, `lerp`, `damp`, `mapRange`, `degToRad`, `radToDeg`, `random`, `randomPick`, `shuffle`, `get`, `set`, `remove`, `sync` |
 | `…anime.easings` | `anime.easings` (`spring`, `cubicBezier`, `steps`, `linear`, `irregular`) and the `eases` set |
 
+```mermaid
+flowchart LR
+    ROOT["io.github.shijianjs.ktjs.anime<br/>animate / createTimeline / createTimer / stagger<br/>+ the params builders"] --> CORE["…anime.core<br/>Timer / JSAnimation / Timeline, their parameter<br/>interfaces, the unions (TargetsParam, EasingParam)"]
+    CORE --> UTILS["…anime.utils<br/>clamp / snap / lerp / mapRange / get / set / sync …"]
+    CORE --> EAS["…anime.easings<br/>spring / cubicBezier / steps / linear / irregular, plus eases"]
+```
+
 ## Conventions this wrapper follows
 
 - A union type is one opaque interface plus one factory per branch: `TargetsParam("#app")`,

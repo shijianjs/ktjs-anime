@@ -10,6 +10,18 @@ title: 简介
 
 封装范围是 `animejs` 4 的动画核心：`animate()`、`createTimeline()`、`createTimer()`、`stagger()`、`JSAnimation` / `Timeline` / `Timer` 类层次及其带类型的参数对象、`anime.utils`（数字、目标与时间工具）、`anime.easings`（缓动工厂与 `eases` 缓动集合）。
 
+```mermaid
+flowchart LR
+    NPM["animejs 4.5.0，一个 npm 包"] --> API["animate / createTimeline / createTimer / stagger"]
+    NPM --> CLASS["JSAnimation / Timeline / Timer"]
+    NPM --> UTILS["anime.utils"]
+    NPM --> EAS["anime.easings 与 eases"]
+    API --> K["io.github.shijianjs.ktjs.anime<br/>含 core / utils / easings 子包"]
+    CLASS --> K
+    UTILS --> K
+    EAS --> K
+```
+
 ## 封装了哪些包
 
 | 模块 | Gradle 坐标 | 上游 |

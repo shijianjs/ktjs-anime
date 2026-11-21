@@ -29,6 +29,14 @@ kotlin {
 
 anime.js 4 没有插件注册表：一切都是 `animejs` 模块的具名导出。Kotlin/JS 不能直接绑定具名导出，所以 wrapper 把模块声明成一个 external object（`AnimeNamespace`），公开函数（`animate`、`createTimeline` 等）转发给它。因此导入 `io.github.shijianjs.ktjs.anime.animate` 就够了 —— 没有需要注册的东西。
 
+```mermaid
+flowchart LR
+    DEP["implementation(ktjs-anime) + kotlin-browser"] --> NS["AnimeNamespace：把模块的具名导出收成一个外部对象"]
+    NS --> FN["animate / createTimeline / createTimer / stagger"]
+    FN --> P["animationParams { property("translateX", 240.0); duration; ease }"]
+    P --> OUT["返回 JSAnimation / Timeline / Timer 实例"]
+```
+
 ## 第一个调用
 
 ```kotlin
