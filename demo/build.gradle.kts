@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage
 
 plugins {
     kotlin("multiplatform")
+    id("com.google.devtools.ksp")
 }
 
 // The demo shell (`ktjs-demo-kit`) is built from Vaadin's published wrapper, which ships the
@@ -144,3 +145,16 @@ tasks.register<Test>("e2eTest") {
 }
 
 tasks.named<Test>("jvmTest") { enabled = false }
+
+/**
+ * `ktjs-dom-kit-ksp` writes the `…DefaultReference` each element's companion extends — the tag and the
+ * `observedAttributes` array — from the class's declarations, plus one `<prefix>CustomElements` object
+ * listing all of them. The prefix spells the tags this demo already uses: `anime-`.
+ */
+dependencies {
+    add("kspJs", "io.github.shijianjs:ktjs-dom-kit-ksp:${providers.gradleProperty("ktjs-dom-kit.version").get()}")
+}
+
+ksp {
+    arg("ktjs.tagPrefix", "anime-")
+}

@@ -19,7 +19,6 @@ import io.github.shijianjs.ktjs.demo.i18n.texts
 import io.github.shijianjs.ktjs.demo.page.Blocks.row
 import io.github.shijianjs.ktjs.demo.page.SectionBlock
 import io.github.shijianjs.ktjs.dom.element.invoke
-import io.github.shijianjs.ktjs.dom.webcomponent.CustomElementReferenceAdapter
 import io.github.shijianjs.ktjs.vaadin.button.createButton
 import web.dom.clickEvent
 import web.events.addHandler
@@ -141,7 +140,7 @@ internal class AnimationPage : DemoPage() {
         texts.apply(lang)
     }
 
-    companion object : CustomElementReferenceAdapter<AnimationPage>(AnimationPage::class.js, "anime-animation-page") {
+    companion object : AnimationPageDefaultReference() {
 
         private val animationEnglish: AnimationTexts = AnimationTexts(
             title = "Animation",

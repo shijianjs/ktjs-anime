@@ -5,7 +5,6 @@ import io.github.shijianjs.ktjs.demo.style.Palette
 import io.github.shijianjs.ktjs.dom.element.inlineStyle
 import io.github.shijianjs.ktjs.dom.element.invoke
 import io.github.shijianjs.ktjs.dom.webcomponent.CustomElementAdapter
-import io.github.shijianjs.ktjs.dom.webcomponent.CustomElementReferenceAdapter
 import web.cssom.AlignItems
 import web.cssom.Border
 import web.cssom.ClassName
@@ -56,7 +55,7 @@ internal class Stage : CustomElementAdapter() {
         }
     }
 
-    companion object : CustomElementReferenceAdapter<Stage>(Stage::class.js, "anime-stage") {
+    companion object : StageDefaultReference() {
         /** The class the end-to-end suite uses to find the animated boxes; it carries no styling. */
         private val STAGE: ClassName = ClassName("stage")
     }
