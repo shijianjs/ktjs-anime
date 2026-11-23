@@ -60,7 +60,7 @@ kotlin {
             api("org.jetbrains.kotlin-wrappers:kotlin-browser:2026.11.2")
 
             // `js.objects.unsafeJso` (kotlin-js-plain-objects) builds every params object.
-            api("org.jetbrains.kotlin-wrappers:kotlin-js:2026.11.1")
+            api("org.jetbrains.kotlin-wrappers:kotlin-js:2026.11.2")
         }
         jsTest.dependencies {
             implementation(kotlin("test"))
