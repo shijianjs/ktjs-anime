@@ -1,6 +1,7 @@
 package io.github.shijianjs.ktjs.anime.core
 
 import js.objects.unsafeJso
+import js.reflect.Reflect
 import kotlin.js.JsAny
 import kotlin.js.Promise
 import kotlin.js.unsafeCast
@@ -124,5 +125,5 @@ external class JSAnimation : Timer {
 }
 
 private fun putProperty(target: JsAny, name: String, value: JsAny) {
-    js("target[name] = value")
+    Reflect.set(target, name, value)
 }
